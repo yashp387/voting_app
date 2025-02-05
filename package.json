@@ -1,0 +1,31 @@
+{
+  "name": "voting_app",
+  "version": "1.0.0",
+  "description": "A code repo for node.js  project",
+  "homepage": "https://github.com/yashp387/voting_app#readme",
+  "bugs": {
+    "url": "https://github.com/yashp387/voting_app/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yashp387/voting_app.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.3",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
+    "mongoose": "^8.9.7",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0"
+  }
+}
