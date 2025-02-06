@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
     },
     isVoted: {
         type: Boolean,
-        deefault: false,
+        default: false,
     },
 
 });

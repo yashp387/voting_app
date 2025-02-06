@@ -1,24 +1,26 @@
 const express = require("express");
 const router = express.Router();
-const Candidate = require("./../models/candidate");
 const {jwtAuthMiddleware, generateToken} = require("./../jwt");
+const Candidate = require("./../models/candidate");
 const User = require("../models/user");
 
 
 const checkAdminRole = async (userId) => {
     try {
         const user = await User.findById(userId);
-        return user.role === "admin";
+        if(user.role === "admin") {
+            return true;
+        }
     } catch (error) {
         return false;
     }
 }
 
 // POST route to add a candidate
-router.post("/", async (req, res) => {
+router.post("/", jwtAuthMiddleware, async (req, res) => {
     try {
-        if(!checkAdminRole(req.user.id)) 
-           return res.status(404).json({msg: "User has not admin role"});
+        if(! await checkAdminRole(req.user.id)) 
+           return res.status(403).json({msg: "User does not have admin role"});
 
         const data = req.body   // Assuming the rquest body contains the candidate data
   
@@ -27,8 +29,6 @@ router.post("/", async (req, res) => {
       
          // Save the new User to the database
         const response = await newCandidate.save();
-        console.log("Data saved");
-
         console.log("Data saved")
         res.status(200).json({response: response});
   
@@ -39,43 +39,47 @@ router.post("/", async (req, res) => {
 });
 
 
-// Profile route
-router.get("/profile",jwtAuthMiddleware, async (req, res) => {
+router.put("/:candidateId", jwtAuthMiddleware,  async (req, res) => {
   try {
-    const userData = req.user;
-    const userId = userData.id;
-    const user = await User.findById(userId);
-    res.status(200).json({user});
+       if(!checkAdminRole(req.user.id)) 
+         return res.status(403).json({msg: "User does not have admin role"});
 
+       const candidateId = req.params.candidateId;  // Extract the id from URL parameter
+       const updatedCandidateData = req.body;  // Update the data for candidate
+   
+       const response = await User.findByIdAndUpdate(candidateId, updatedCandidateData, {
+         new: true, // Return the updated document
+         runValidators: true // Run mongoose validation
+       });
+   
+       if(!response) {
+         return res.status(404).json({error: "Candidate not found"})
+       }
+   
+       console.log(" Candidate data updated");
+       res.status(200).json({response : response, msg: "Candidate data updated"});
   } catch (error) {
     console.log(error);
-    res.status(500).json({error: "Internal server error"});
+    res.status(500).json("Internal server error occured");
   }
 });
 
 
-router.put("/:candidateId", async (req, res) => {
+router.delete("/:candidateId", jwtAuthMiddleware, async (req, res) => {
   try {
        if(!checkAdminRole(req.user.id)) 
-         return res.status(404).json({msg: "User has not admin role"});
+          return res.status(403).json({msg: "User does not have admin role"});
 
-    const userId = req.user.id;   // Extract the id from the token
-    const {currentPassword, newPassword} = req.body;  // Extracgt the current and new passwords from the request body
+       const candidateId = req.params.candidateId;  // Extract the id from URL parameter
 
-    // Find the user by userId
-    const user = await User.findById(userId);
-
-    // If password does not match, return error
-    if(!(await user.comparePassword(currentPassword))) {
-        return res.status(401).json({error: "Invalid password"});
-    }
-
-    // Update the user's password
-    user.password = newPassword;
-    await user.save();
-
-    console.log("Password updated");
-    res.status(200).json({msg: "Password updated successfully"});
+       const response = await User.findByIdAndDelete(candidateId);
+   
+       if(!response) {
+         return res.status(404).json({error: "Candidate not found"})
+       }
+   
+       console.log("Candidate deleted");
+       res.status(200).json(response);
   } catch (error) {
     console.log(error);
     res.status(500).json("Internal server error occured");
