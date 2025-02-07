@@ -7,6 +7,12 @@ const User = require("./../models/user");
 router.post("/signup", async (req, res) => {
     try {
       const data = req.body   // Assuming the rquest body contains the User data
+
+      // Check if there already an admin user
+      // const adminUser = await User.find({role: "admin"});
+      // if(data.role === "admin" || adminUser) {
+      //   res.status(400).json({error: "Admin user already exist"});
+      // }
   
       // Create a new User document using the Mongoose model
       const newUser = new User(data);

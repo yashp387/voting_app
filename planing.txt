@@ -30,7 +30,7 @@ Voting:
     /vote/:candidateId POST - Vote for a specific candidate.
 
 Vote Counts:
-    /vote/counts: GET - Get the list of candidates sorted by their vote counts.
+    /vote/count: GET - Get the list of candidates sorted by their vote counts.
 
 User Profile: 
     /profile: GET - Get the user's profile information.

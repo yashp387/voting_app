@@ -15,11 +15,6 @@ const candidateRoutes = require("./routes/candidateRoutes");
 app.use("/user",userRoutes);
 app.use("/candidate", candidateRoutes);
 
-// app.use((err, req, res, next) => {
-//     console.error("Global Error:", err);
-//     res.status(500).json({ error: err.message || "Internal Server Error" });
-// });
-
 
 app.listen(PORT, () => {
     console.log("Listening on port 3000");
